@@ -1,58 +1,116 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Shajaretna — شجرتنا
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+An Arab family tree web app. Lets you build out a family tree — including polygamous marriages, half-siblings, and marriages between blood relatives (common in Arab families) — and look up how any two people in the tree are related to each other, with the relationship spelled out as a proper Arabic kinship term (e.g. "عمه", "ابن خالتها").
 
-## About Laravel
+## Tech Stack
+- **Backend:** Laravel 13 (PHP 8.4)
+- **Database:** MySQL 8
+- **Frontend:** Blade templates + Livewire 4 (server-driven interactivity, no separate JS framework) + Tailwind CSS v4
+- **Build tool:** Vite 8
+- **Authentication:** mobile number + full Arabic name (الاسم الرباعي) — no email/password
+- **Node.js:** requires v20 or newer (this project uses v22 via nvm)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Getting Started
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Fresh Clone Setup (new machine)
+This section walks through getting the project running on a computer that has never had this code on it before (e.g. a home laptop). Every command below is typed into a terminal app.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+**1. Download the code — `git clone`**
+`git` is the tool that has been tracking every change made to this project. `clone` means "download a full copy of the repository, including its entire history" into a new folder. This creates a folder named `shajaretna` inside whatever folder your terminal is currently in.
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/ramo-nadmah/shajaretna.git
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+**2. Move into the project folder — `cd`**
+`cd` (change directory) tells the terminal "everything I type next happens inside this folder." Every command from here on assumes the terminal is standing inside `shajaretna` — if you close the terminal and reopen it later, you must `cd` back into the folder again before running any project command.
+```bash
+cd shajaretna
+```
 
-## Contributing
+**3. Install the PHP libraries the app depends on — `composer install`**
+This app doesn't write every line of code itself — it relies on ready-made PHP packages (the Laravel framework, Livewire, etc.), listed in a file called `composer.json`. **Composer** is the tool that reads that list and downloads each package into a `vendor/` folder. Nothing in the app runs without this. Run it while inside the `shajaretna` folder (from step 2):
+```bash
+composer install
+```
+(If Composer itself isn't installed on this computer yet, get it from https://getcomposer.org/download/ first.)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**4. Switch to the correct JavaScript engine version — `nvm use 22`**
+The frontend build tool this project uses (Vite) requires Node.js version 20 or newer. **Node.js** is a program that runs JavaScript outside a browser (needed here just to build the CSS/JS files, not to run the app itself — that's PHP's job). **nvm** (Node Version Manager) lets one computer keep several Node versions installed side by side and switch between them. This switches the current terminal to version 22:
+```bash
+nvm use 22
+```
+(If `nvm` isn't installed, or Node 22 was never installed through it, see https://github.com/nvm-sh/nvm — after installing nvm itself, run `nvm install 22` once.)
 
-## Code of Conduct
+**5. Install the JavaScript libraries the app depends on — `npm install`**
+Same idea as Composer, but for frontend packages (Tailwind CSS, Vite) listed in `package.json`. **npm** (Node Package Manager) comes bundled with Node.js and downloads them into a `node_modules/` folder:
+```bash
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**6. Create your own local settings file — `cp .env.example .env`**
+Laravel reads its configuration (database connection details, secret keys, app settings) from a file called `.env`. This file is intentionally never stored in git (it holds secrets and differs on every machine). The repo ships a template with placeholder values, `.env.example`. This command copies that template so you have your own editable `.env`:
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+**7. Generate the app's secret encryption key — `php artisan key:generate`**
+`php artisan` runs Laravel's own command-line tool (`artisan`), bundled with the framework. Laravel needs a random secret key to encrypt session data and cookies securely — without one, the app refuses to run. This command generates that key and writes it straight into your new `.env` file:
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**8. Point `.env` at your local database**
+Open the `.env` file in any text editor and set these three lines:
+```
+DB_DATABASE=shajaretna
+DB_USERNAME=your_mysql_username
+DB_PASSWORD=your_mysql_password
+```
+This tells Laravel which MySQL database to connect to and which credentials to log in with — use whatever MySQL user already exists on this computer (or create one).
 
-## License
+**9. Create the actual (empty) database — a `mysql` command**
+Step 8 only told Laravel *where* to look; the database itself doesn't exist yet on a brand new machine. This command talks to MySQL directly and creates an empty database named `shajaretna`, set up with `utf8mb4` — the character encoding needed to correctly store Arabic text:
+```bash
+mysql -u root -e "CREATE DATABASE shajaretna CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+(Replace `root` with your own MySQL username if different; it may prompt for a password.)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**10. Build the database tables — `php artisan migrate`**
+The database exists but is completely empty, with no tables. **Migrations** are step-by-step, version-controlled instructions (stored in `database/migrations/`) that describe how to build each table (`users`, `people`, `marriages`, `parent_child`). This command runs all of them in order:
+```bash
+php artisan migrate
+```
+
+Once this finishes, the project is fully installed. Continue with "Running the Dev Server" below to actually start it and view it in a browser.
+
+### Prerequisites (already-set-up machine)
+- MySQL 8 must be running (database `shajaretna` already exists and is migrated)
+- Node.js v22 via nvm: `nvm use 22`
+
+### Running the Dev Server (two terminals)
+```bash
+# Terminal 1 — Vite asset watcher (rebuilds CSS/JS automatically as you edit files)
+nvm use 22 && npm run dev
+
+# Terminal 2 — Laravel's own web server (pick any free high port)
+php artisan serve --port=19000
+```
+App is at **http://localhost:19000** — redirects to `/login`.
+
+### One-shot Build (no watcher needed)
+Use this when you just want to view the app once, without editing CSS/JS live:
+```bash
+nvm use 22 && npm run build
+php artisan serve --port=19000
+```
+
+### Useful Artisan Commands
+`artisan` is Laravel's built-in command-line tool.
+```bash
+php artisan kinship:test          # run all 16 kinship label tests
+php artisan tinker --execute '…'  # open an interactive PHP console scoped to the app; always single-quote to avoid shell expansion
+php artisan route:list --except-vendor   # list every URL route the app responds to
+```
+
+### Test Credentials
+There's no fixed test account — any mobile number works. The first time a number logs in it registers a new account (asking for a full Arabic name); every time after that it just logs in.
