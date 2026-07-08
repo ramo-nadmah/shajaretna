@@ -28,7 +28,57 @@
             <button id="btn-zoom-in"   class="tree-ctrl-btn">+</button>
             <button id="btn-zoom-out"  class="tree-ctrl-btn">−</button>
             <button id="btn-zoom-fit"  class="tree-ctrl-btn" title="ضبط الشاشة">⌖</button>
+            <button id="btn-settings"  class="tree-ctrl-btn" title="إعدادات المظهر">⚙</button>
             <button id="btn-patrilineal" class="tree-ctrl-btn" title="عرض عائلة واحدة فقط (رجال النسب)">عائلة واحدة</button>
+        </div>
+
+        {{-- Design settings panel (live-editable, saved to localStorage) --}}
+        <div id="settings-panel" class="ft-settings-panel ft-hidden" dir="rtl">
+            <div class="ft-settings-header">
+                <p class="ft-settings-title">إعدادات المظهر</p>
+                <button id="settings-close" class="ft-settings-close">×</button>
+            </div>
+            <div class="ft-settings-body">
+
+                <div class="ft-settings-group ft-settings-group--scale">
+                    <label class="ft-settings-label" for="cfg-scale">
+                        المضاعف العام <span class="ft-settings-hint">(يكبّر أو يصغّر كل شيء دفعة واحدة)</span>
+                    </label>
+                    <input id="cfg-scale" type="number" step="0.05" min="0.2" max="5" class="ft-settings-input">
+                </div>
+
+                <div class="ft-settings-group">
+                    <p class="ft-settings-group-title">حجم الصندوق والخط</p>
+                    <div class="ft-settings-row"><label for="cfg-node-width">عرض الصندوق</label><input id="cfg-node-width" type="number" step="2" min="40" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-node-height">ارتفاع الصندوق</label><input id="cfg-node-height" type="number" step="2" min="30" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-node-corner">استدارة الزوايا</label><input id="cfg-node-corner" type="number" step="1" min="0" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-font-1">حجم الخط (السطر الأول)</label><input id="cfg-font-1" type="number" step="1" min="6" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-font-2">حجم الخط (السطر الثاني)</label><input id="cfg-font-2" type="number" step="1" min="6" class="ft-settings-input"></div>
+                </div>
+
+                <div class="ft-settings-group">
+                    <p class="ft-settings-group-title">المسافات</p>
+                    <div class="ft-settings-row"><label for="cfg-gap-couple">بين الزوجين</label><input id="cfg-gap-couple" type="number" step="5" min="20" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-gap-sibling">بين الإخوة</label><input id="cfg-gap-sibling" type="number" step="5" min="10" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-gap-level">بين الأجيال</label><input id="cfg-gap-level" type="number" step="5" min="60" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-gap-margin">هامش اللوحة</label><input id="cfg-gap-margin" type="number" step="5" min="0" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-gap-toppad">هامش أعلى الشجرة</label><input id="cfg-gap-toppad" type="number" step="5" min="0" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-gap-married-in-drop">انخفاض المتزوج من خارج العائلة</label><input id="cfg-gap-married-in-drop" type="number" step="2" min="0" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-gap-mother-bus-step">تباعد روابط الأمهات المتعددات</label><input id="cfg-gap-mother-bus-step" type="number" step="2" min="0" class="ft-settings-input"></div>
+                </div>
+
+                <div class="ft-settings-group">
+                    <p class="ft-settings-group-title">سُمك الروابط</p>
+                    <div class="ft-settings-row"><label for="cfg-father-width">رابط الأب</label><input id="cfg-father-width" type="number" step="0.5" min="0.5" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-mother-width">رابط الأم</label><input id="cfg-mother-width" type="number" step="0.5" min="0.5" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-mother-opacity">وضوح رابط الأم</label><input id="cfg-mother-opacity" type="number" step="0.05" min="0.05" max="1" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-mother-dash-length">طول شرطات رابط الأم</label><input id="cfg-mother-dash-length" type="number" step="0.5" min="0.5" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-mother-dash-gap">الفراغ بين الشرطات</label><input id="cfg-mother-dash-gap" type="number" step="0.5" min="0.5" class="ft-settings-input"></div>
+                    <div class="ft-settings-row"><label for="cfg-marriage-width">رابط الزواج</label><input id="cfg-marriage-width" type="number" step="0.5" min="0.5" class="ft-settings-input"></div>
+                </div>
+
+            </div>
+            <button id="settings-reset" class="ft-settings-reset">إعادة الضبط الافتراضي</button>
         </div>
 
         {{-- Mobile panel toggle --}}
@@ -80,15 +130,15 @@
             <p class="ft-section-label">مفتاح</p>
             <div class="ft-legend-items">
                 <div class="legend-row">
-                    <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="#3A5070" stroke-width="2.5"/></svg>
+                    <svg width="24" height="8"><line id="legend-line-father" x1="0" y1="4" x2="24" y2="4" stroke="#3A5070" stroke-width="2.5"/></svg>
                     <span class="legend-label">رابط الأب</span>
                 </div>
                 <div class="legend-row">
-                    <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="#3D7055" stroke-width="2" stroke-dasharray="0.5 7" stroke-linecap="round"/></svg>
+                    <svg width="24" height="8"><line id="legend-line-mother" x1="0" y1="4" x2="24" y2="4" stroke="#3D7055" stroke-width="2.5" stroke-dasharray="3 6" stroke-linecap="round"/></svg>
                     <span class="legend-label">رابط الأم</span>
                 </div>
                 <div class="legend-row">
-                    <svg width="24" height="8"><line x1="0" y1="4" x2="24" y2="4" stroke="#8A7228" stroke-width="2" stroke-dasharray="4 3"/></svg>
+                    <svg width="24" height="8"><line id="legend-line-marriage" x1="0" y1="4" x2="24" y2="4" stroke="#8A7228" stroke-width="2.5" stroke-dasharray="4 3"/></svg>
                     <span class="legend-label">زواج</span>
                 </div>
                 <div class="ft-legend-swatches">
@@ -100,6 +150,10 @@
                         <span class="ft-legend-swatch ft-legend-swatch--female"></span>
                         <span class="legend-label">أنثى</span>
                     </div>
+                </div>
+                <div class="legend-row">
+                    <span class="ft-legend-swatch ft-legend-swatch--married-in"></span>
+                    <span class="legend-label">متزوج من خارج العائلة</span>
                 </div>
             </div>
         </div>
@@ -207,6 +261,63 @@
     display: flex; align-items: center; justify-content: center;
 }
 .tree-ctrl-btn:hover { background: #243650; }
+
+/* ── Design settings panel ───────────────────────────────────────── */
+.ft-settings-panel {
+    position: absolute;
+    bottom: 20px; right: 70px;
+    z-index: 25;
+    width: 280px;
+    max-height: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+    background: #1A2535;
+    border: 1px solid rgba(200,166,62,.3);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.6);
+}
+.ft-settings-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.ft-settings-title { font-size: 0.95rem; color: #C8A63E; }
+.ft-settings-close {
+    background: none; border: none; color: #6B829E;
+    font-size: 18px; cursor: pointer; padding: 0; line-height: 1;
+}
+.ft-settings-close:hover { color: #C8C0B0; }
+.ft-settings-body { overflow-y: auto; padding: 10px 14px; }
+.ft-settings-group { margin-bottom: 14px; }
+.ft-settings-group-title { font-size: 0.82rem; color: #6B829E; letter-spacing: .04em; margin-bottom: 6px; }
+.ft-settings-group--scale .ft-settings-label { font-size: 0.85rem; color: #C8C0B0; display: block; margin-bottom: 6px; }
+.ft-settings-hint { font-size: 0.78rem; color: #6B829E; }
+.ft-settings-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 6px;
+}
+.ft-settings-row label { font-size: 0.85rem; color: #8A9AB8; }
+.ft-settings-input {
+    width: 72px;
+    background: #141D2B;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 6px;
+    color: #C8C0B0;
+    font-size: 0.85rem;
+    padding: 4px 6px;
+    text-align: center;
+}
+.ft-settings-input:focus { outline: none; border-color: rgba(200,166,62,.5); }
+.ft-settings-reset {
+    margin: 4px 14px 12px;
+    padding: 8px;
+    background: none;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 6px;
+    color: #6B829E; font-size: 0.9rem; cursor: pointer;
+}
+.ft-settings-reset:hover { border-color: rgba(200,166,62,.3); color: #C8A63E; }
+.ft-settings-panel.ft-hidden { display: none; }
 
 /* ── Mobile panel-open button ────────────────────────────────────── */
 .ft-panel-toggle {
@@ -316,6 +427,7 @@
 .ft-legend-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
 .ft-legend-swatch--male   { background: #192B42; border: 1px solid #2E5060; }
 .ft-legend-swatch--female { background: #2A1625; border: 1px solid #5A2E40; }
+.ft-legend-swatch--married-in { background: #192B42; border: 1px dashed #8A7228; }
 
 /* ── Unlinked people section ─────────────────────────────────────── */
 .ft-unlinked-section { flex: 1; overflow-y: auto; padding: 12px 18px; }
@@ -418,6 +530,12 @@
     }
     #side-panel.open { transform: translateX(0); }
     #panel-backdrop.open { display: block !important; }
+
+    .ft-settings-panel {
+        right: 8px; left: 8px; bottom: 76px;
+        width: auto;
+        max-height: calc(100% - 96px);
+    }
 }
 </style>
 
@@ -437,22 +555,194 @@ const MARRIAGES = @json($marriages);
 if (!PEOPLE.length) return;
 
 // ══════════════════════════════════════════════════════════════════
-// 2. CONSTANTS
+// 2. DESIGN CONFIG
+// Every tunable visual number (node size, fonts, gaps, link widths)
+// lives in DEFAULT_TREE_CONFIG. Users edit live values through the
+// ⚙ settings panel (Section 17) and changes persist to localStorage.
+// `scale` is a single global multiplier applied on top of every size
+// value below — colors, opacity, and dash-pattern ratios are exempt.
 // ══════════════════════════════════════════════════════════════════
 
-const NODE = Object.freeze({ width: 190, height: 88, cornerRadius: 12 });
+const CONFIG_STORAGE_KEY = 'shajaretna.treeDesignConfig.v1';
 
-const GAP = Object.freeze({
-    couple:  240,   // center-to-center: husband → wife (must be > NODE.width for nodes not to overlap)
-    sibling:  90,   // horizontal gap between subtrees
-    level:   185,   // vertical gap between generations
-    margin:  110,   // canvas left/top offset
-    topPad:  120,   // vertical offset for generation 0
+const DEFAULT_TREE_CONFIG = Object.freeze({
+    scale: 1, // multiplies every size value below — the "adjust everything at once" control
+
+    nodeWidth:        190,
+    nodeHeight:        88,
+    nodeCornerRadius:  12,
+    fontSizeName1:     18,
+    fontSizeName2:     15,
+    nameLineOffset:    16, // vertical shift of line 1 when a person has a two-line name
+    nameLineGap:        8, // extra gap before line 2, beyond nameLineOffset
+    genderPipRadius:    5,
+    genderPipInset:     7, // distance of the gender dot from the node's top-outer corner
+
+    gapCouple:  210, // center-to-center: husband → wife (must be > nodeWidth for nodes not to overlap)
+    gapSibling:  90, // horizontal gap between subtrees
+    gapLevel:   185, // vertical gap between generations
+    gapMargin:  110, // canvas left/top offset
+    gapTopPad:  120, // vertical offset for generation 0
+    gapMarriedInDrop: 24, // extra downward nudge for a spouse who married into the family (not a blood
+                          // sibling of that row) — a small visual cue, separate from the generation row itself
+    gapMotherBusStep: 20, // extra vertical separation PER co-wife's mother-bus line. Co-wives sit on
+                          // the exact same row, so without this every wife's mother-edges would land
+                          // on the identical bus height and visually cross/overlap each other — this
+                          // is added per wife-index (0, 1, 2, ...) so it scales to any number of wives
+    gapMinClearanceAboveChild: 10, // a bus line's minimum distance above the children's row, no
+                          // matter how many co-wife steps or married-in drops stack up before it —
+                          // without this floor, enough of either could push a bus line low enough
+                          // to visually cut through the top of a child's (or sibling's) own box
+
+    fatherLineWidth:      2.5,
+    fatherHighlightWidth: 3,
+    motherLineWidth:      2.5,
+    motherHighlightWidth: 3,
+    motherDashLength:     3,    // was 0.5 — that made the line nearly invisible without zooming in
+    motherDashGap:        6,
+    motherOpacity:        0.55, // was 0.45
+    marriageLineWidth:    2.5,
+
+    // Fraction of the inter-generation gap where each bus line's horizontal segment sits.
+    // Kept different on purpose — father and mother buses used to sit at the exact same
+    // height, so for any couple's shared children the mother's colored dashed line was drawn
+    // directly on top of the father's solid line for that whole stretch. Not scaled by
+    // `scale` — these are proportions of the (already-scaled) level gap, not sizes themselves.
+    fatherBusYRatio: 0.38,
+    motherBusYRatio: 0.62,
+
+    // How far a mother edge's vertical stems sit from center, as a fraction of NODE.width —
+    // offset so they don't run exactly on top of the centered father-edge stems. Applied toward
+    // whichever side the child actually is on (see renderMotherEdges), not a fixed direction.
+    motherEdgeOffsetRatio: 0.15,
+    // Marriage-arc bulge height, as a fraction of the horizontal distance between the couple.
+    marriageArcCurveRatio: 0.16,
+
+    // Shared opacity levels for edges — a "dimmed" edge is one where both ends are outside the
+    // current kinship-highlight path; the others are each edge type's normal (non-dimmed) opacity.
+    dimmedEdgeOpacity: 0.1,
+    fatherEdgeOpacity: 0.65,
+    marriageEdgeOpacity: 0.55,
+    // Same idea, but for a dimmed NODE (not an edge) — a person outside the current path.
+    dimmedNodeOpacity: 0.3,
+
+    // Drag-to-link visual feedback: how much a valid drop target's node scales up on hover.
+    dropTargetScale: 1.15,
+    // Opacity of the soft glow ring drawn around nodes on the highlighted kinship path.
+    glowRingOpacity: 0.35,
+    // A two-line name's second line renders at this fraction of the node's normal text opacity.
+    nameLine2OpacityFactor: 0.8,
+    // The small gender-indicator dot renders at this fraction of the node's normal opacity.
+    genderPipOpacityFactor: 0.85,
+    // Multiplier applied per click of the +/- zoom buttons.
+    zoomStepFactor: 1.2,
+
+    dropRingPadding:      10,
+    dropRingStrokeWidth:  2.5,
+    glowRingPadding:       5,
+    glowRingStrokeWidth:   1,
+    marriageArcMinHeight: 20,
+    canvasBottomMargin:   80, // extra vertical padding fitTreeToViewport() leaves below the last generation
+
+    nodeBorderDefault:     1.5,
+    nodeBorderOnPath:      2,
+    nodeBorderDimmed:      1,
+    nodeBorderSelected:    2.5,
+    nodeBorderDropTarget:  3,
+
+    fitPadding: 1, // zoom-to-fit leaves this fraction of the viewport — deliberately not scaled
 });
 
-const FIT_PADDING      = 0.88;            // zoom-to-fit leaves this fraction of the viewport
-const ROOT_X_GAP       = GAP.sibling * 3; // extra horizontal gap between structural-root subtrees
-const LINK_SNAP_RADIUS = NODE.width / 2;  // dragged center must land inside the target rect to trigger
+function loadTreeConfig() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || '{}');
+        return { ...DEFAULT_TREE_CONFIG, ...saved };
+    } catch {
+        return { ...DEFAULT_TREE_CONFIG };
+    }
+}
+
+let TREE_CONFIG = loadTreeConfig();
+
+function saveTreeConfig() {
+    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(TREE_CONFIG));
+}
+
+// Derived, scale-applied values — recomputed by applyTreeConfig() whenever
+// TREE_CONFIG changes. Referenced throughout the file as NODE / GAP / LINE / EFFECT,
+// exactly like the old frozen constants they replace.
+let NODE, GAP, LINE, EFFECT, FIT_PADDING, ROOT_X_GAP, LINK_SNAP_RADIUS, ZOOM_STEP_FACTOR;
+
+function applyTreeConfig() {
+    const scale = TREE_CONFIG.scale;
+
+    NODE = Object.freeze({
+        width:           TREE_CONFIG.nodeWidth        * scale,
+        height:          TREE_CONFIG.nodeHeight       * scale,
+        cornerRadius:    TREE_CONFIG.nodeCornerRadius * scale,
+        fontSizeName1:   TREE_CONFIG.fontSizeName1    * scale,
+        fontSizeName2:   TREE_CONFIG.fontSizeName2    * scale,
+        nameLineOffset:  TREE_CONFIG.nameLineOffset   * scale,
+        nameLineGap:     TREE_CONFIG.nameLineGap      * scale,
+        genderPipRadius: TREE_CONFIG.genderPipRadius  * scale,
+        genderPipInset:  TREE_CONFIG.genderPipInset   * scale,
+        marriedInBorderDashArray: `${4 * scale} ${3 * scale}`, // matches the marriage-line dash rhythm
+        nameLine2OpacityFactor:   TREE_CONFIG.nameLine2OpacityFactor,   // a proportion — not scaled
+        genderPipOpacityFactor:   TREE_CONFIG.genderPipOpacityFactor,
+    });
+
+    GAP = Object.freeze({
+        couple:  TREE_CONFIG.gapCouple  * scale,
+        sibling: TREE_CONFIG.gapSibling * scale,
+        level:   TREE_CONFIG.gapLevel   * scale,
+        margin:  TREE_CONFIG.gapMargin  * scale,
+        topPad:  TREE_CONFIG.gapTopPad  * scale,
+        marriedInDrop: TREE_CONFIG.gapMarriedInDrop * scale,
+        motherBusStep: TREE_CONFIG.gapMotherBusStep * scale,
+        minClearanceAboveChild: TREE_CONFIG.gapMinClearanceAboveChild * scale,
+    });
+
+    LINE = Object.freeze({
+        fatherWidth:     TREE_CONFIG.fatherLineWidth      * scale,
+        fatherHighlight: TREE_CONFIG.fatherHighlightWidth * scale,
+        motherWidth:     TREE_CONFIG.motherLineWidth      * scale,
+        motherHighlight: TREE_CONFIG.motherHighlightWidth * scale,
+        motherDashArray: `${TREE_CONFIG.motherDashLength * scale} ${TREE_CONFIG.motherDashGap * scale}`,
+        motherOpacity:   TREE_CONFIG.motherOpacity, // opacity is not a size — not scaled
+        marriageWidth:   TREE_CONFIG.marriageLineWidth * scale,
+        fatherBusYRatio: TREE_CONFIG.fatherBusYRatio, // a proportion, not a size — not scaled
+        motherBusYRatio: TREE_CONFIG.motherBusYRatio,
+        motherOffsetRatio:   TREE_CONFIG.motherEdgeOffsetRatio, // proportion of NODE.width — not scaled
+        marriageArcCurveRatio: TREE_CONFIG.marriageArcCurveRatio,
+        dimmedOpacity:   TREE_CONFIG.dimmedEdgeOpacity,   // opacities — not scaled
+        fatherOpacity:   TREE_CONFIG.fatherEdgeOpacity,
+        marriageOpacity: TREE_CONFIG.marriageEdgeOpacity,
+    });
+
+    EFFECT = Object.freeze({
+        dropTargetScale: TREE_CONFIG.dropTargetScale, // a relative multiplier — not scaled
+        glowRingOpacity: TREE_CONFIG.glowRingOpacity,  // an opacity — not scaled
+        dimmedNodeOpacity: TREE_CONFIG.dimmedNodeOpacity,
+        dropRingPadding:      TREE_CONFIG.dropRingPadding      * scale,
+        dropRingStrokeWidth:  TREE_CONFIG.dropRingStrokeWidth  * scale,
+        glowRingPadding:      TREE_CONFIG.glowRingPadding      * scale,
+        glowRingStrokeWidth:  TREE_CONFIG.glowRingStrokeWidth  * scale,
+        marriageArcMinHeight: TREE_CONFIG.marriageArcMinHeight * scale,
+        canvasBottomMargin:   TREE_CONFIG.canvasBottomMargin   * scale,
+        nodeBorderDefault:    TREE_CONFIG.nodeBorderDefault    * scale,
+        nodeBorderOnPath:     TREE_CONFIG.nodeBorderOnPath     * scale,
+        nodeBorderDimmed:     TREE_CONFIG.nodeBorderDimmed     * scale,
+        nodeBorderSelected:   TREE_CONFIG.nodeBorderSelected   * scale,
+        nodeBorderDropTarget: TREE_CONFIG.nodeBorderDropTarget * scale,
+    });
+
+    FIT_PADDING      = TREE_CONFIG.fitPadding;
+    ROOT_X_GAP       = GAP.sibling * 3;
+    LINK_SNAP_RADIUS = NODE.width / 2;
+    ZOOM_STEP_FACTOR = TREE_CONFIG.zoomStepFactor;
+}
+
+applyTreeConfig();
 
 const COLOR = Object.freeze({
     nodeMale:           '#192B42',
@@ -478,6 +768,18 @@ const COLOR = Object.freeze({
     genderPipFemale:    '#A04070',
 });
 
+// Distinct mother-line colors for polygamous families — when a father has more than one
+// wife, each wife's mother-links to her own children get one of these instead of the shared
+// default edgeMother color, so it's visually obvious at a glance which children share a mother.
+// A father with only one wife keeps the plain default color (no need to disambiguate).
+const MOTHER_LINE_PALETTE = Object.freeze([
+    '#3D7055', // jade green — same as the default single-wife edgeMother color
+    '#8A4A6E', // rose
+    '#6B5A9E', // violet
+    '#3D8A8A', // teal
+    '#9E7A3D', // amber
+]);
+
 // ══════════════════════════════════════════════════════════════════
 // 3. MODE STATE & DATA-DERIVED MAPS
 // rebuildLayout() recomputes all of these when mode changes.
@@ -492,6 +794,8 @@ let renderMarriages = null;  // MARRIAGES filtered (empty in patrilineal mode)
 let personById;
 let fatherChildrenOf, motherChildrenOf, hasFather, hasMother;
 let wifeIds, wivesOf;
+let attachedHusbandOf, attachedHusbandIds;
+let motherEdgeColorOf, motherBusIndexOf;
 let structuralRoots;
 let generationOf;
 let subtreeWidthCache;
@@ -502,6 +806,11 @@ let parentsOf;
 // see the new values after every rebuildLayout() call.
 const isMarriageOnlyWife = (id) => wifeIds.has(id) && !hasFather.has(id);
 const placedWivesOf      = (id) => wivesOf[id].filter(isMarriageOnlyWife);
+// True for anyone positioned purely because of a marriage rather than blood descent —
+// a marriage-only wife or an attached husband (see attachedHusbandOf). Used to give these
+// nodes a visually distinct dashed border, since they sit right beside their spouse's
+// blood-line siblings but aren't part of that family themselves.
+const isMarriedInSpouse = (id) => isMarriageOnlyWife(id) || attachedHusbandIds.has(id);
 
 // positionOverrides is cleared (not reassigned) by rebuildLayout().
 const positionOverrides = {};
@@ -513,9 +822,20 @@ function positionOf(personId) {
 function subtreeWidth(personId) {
     if (subtreeWidthCache[personId] !== undefined) return subtreeWidthCache[personId];
 
-    const wifeCount  = placedWivesOf(personId).length;
-    const coupleSpan = NODE.width + wifeCount * GAP.couple;
-    const children   = fatherChildrenOf[personId].filter(id => !isMarriageOnlyWife(id));
+    // A woman with her own father is normally positioned purely from his subtree. But if
+    // her husband has no father of his own — his only anchor to the tree is this marriage —
+    // reserve his entire subtree's width right next to her instead of leaving him to be
+    // placed as an unrelated independent root somewhere far away (see attachedHusbandOf).
+    // GAP.couple is a center-to-center convention everywhere else in this file (see its
+    // definition), so the reserved span here has to be GAP.couple + husbandWidth, NOT
+    // NODE.width + GAP.couple + husbandWidth — that extra NODE.width used to leave the couple
+    // visually much farther apart than a normal marriage-only-wife couple (placeSubtree below).
+    const attachedHusbandId = attachedHusbandOf[personId];
+    const coupleSpan = attachedHusbandId !== undefined
+        ? GAP.couple + subtreeWidth(attachedHusbandId)
+        : NODE.width + placedWivesOf(personId).length * GAP.couple;
+
+    const children = fatherChildrenOf[personId].filter(id => !isMarriageOnlyWife(id));
 
     if (!children.length) {
         return (subtreeWidthCache[personId] = coupleSpan);
@@ -528,13 +848,37 @@ function subtreeWidth(personId) {
 }
 
 function placeSubtree(personId, coupleCenter, rowY) {
-    const wives = placedWivesOf(personId);
-    const hubX  = coupleCenter - wives.length * GAP.couple / 2;
+    const attachedHusbandId = attachedHusbandOf[personId];
 
-    basePositions[personId] = { x: hubX, y: rowY };
-    wives.forEach((wifeId, index) => {
-        basePositions[wifeId] = { x: hubX + GAP.couple * (index + 1), y: rowY };
-    });
+    if (attachedHusbandId !== undefined) {
+        // Mirror image of the wives block below: this person (a wife with her own father)
+        // gets her normal box, then her rootless husband's whole subtree is placed edge-to-edge
+        // beside her. The edge-to-edge gap is GAP.couple - NODE.width, matching what a normal
+        // center-to-center GAP.couple already implies for two equal-width boxes — so a simple
+        // couple here ends up exactly as close together as a marriage-only-wife couple below,
+        // rather than one whole extra NODE.width farther apart. If his subtree is wider than a
+        // single box (his own wives/kids), that extra width only pushes his own center further
+        // right — it can never creep back and overlap her.
+        const husbandWidth = subtreeWidth(attachedHusbandId);
+        const edgeGap       = GAP.couple - NODE.width;
+        const leftEdge       = coupleCenter - (NODE.width + edgeGap + husbandWidth) / 2;
+        basePositions[personId] = { x: leftEdge + NODE.width / 2, y: rowY };
+        // Placed with the true (un-nudged) rowY so HIS children still land on the normal
+        // generation row — only his own box gets nudged down, right after, as a visual cue
+        // that he married into this family rather than being born into it.
+        placeSubtree(attachedHusbandId, leftEdge + NODE.width + edgeGap + husbandWidth / 2, rowY);
+        basePositions[attachedHusbandId].y += GAP.marriedInDrop;
+    } else {
+        const wives = placedWivesOf(personId);
+        const hubX  = coupleCenter - wives.length * GAP.couple / 2;
+
+        basePositions[personId] = { x: hubX, y: rowY };
+        wives.forEach((wifeId, index) => {
+            // Nudged down slightly — same visual cue as the attached-husband case above —
+            // to distinguish a married-in wife from her husband's own blood-line siblings.
+            basePositions[wifeId] = { x: hubX + GAP.couple * (index + 1), y: rowY + GAP.marriedInDrop };
+        });
+    }
 
     const children = fatherChildrenOf[personId].filter(id => !isMarriageOnlyWife(id));
     if (!children.length) return;
@@ -554,7 +898,15 @@ function rebuildLayout() {
     // ── Compute active data based on mode ────────────────────────
     renderPeople    = patrilinealMode ? PEOPLE.filter(p => p.gender === 'male') : PEOPLE;
     renderMarriages = patrilinealMode ? [] : MARRIAGES;
-    const activePC  = patrilinealMode ? PC.filter(pc => pc.type === 'father') : PC;
+
+    // In patrilineal mode, activePC must ALSO drop father-links to daughters, not just filter by
+    // relation type — otherwise a daughter's id still shows up as a "child" in fatherChildrenOf,
+    // but she has no entry of her own there (she was filtered out of renderPeople above), and the
+    // generation-assignment BFS below crashes trying to read fatherChildrenOf[herId].forEach(...).
+    const renderPeopleIds = new Set(renderPeople.map(p => p.id));
+    const activePC = patrilinealMode
+        ? PC.filter(pc => pc.type === 'father' && renderPeopleIds.has(pc.child_id))
+        : PC;
 
     // Clear drag overrides from the old layout
     Object.keys(positionOverrides).forEach(k => delete positionOverrides[k]);
@@ -580,9 +932,39 @@ function rebuildLayout() {
     wivesOf = Object.fromEntries(renderPeople.map(p => [p.id, []]));
     renderMarriages.forEach(({ husband_id, wife_id }) => wivesOf[husband_id].push(wife_id));
 
+    // Assign each wife of a polygamous husband her own mother-line color (in marriage order),
+    // so children of different mothers are visually distinguishable at a glance. A husband
+    // with only one wife is left out of this map entirely — his mother-links render in the
+    // plain shared default color, since there's no ambiguity to disambiguate.
+    // motherBusIndexOf also matters here: co-wives sit on the exact same row (same rowY), so
+    // without a distinct index their individual mother-bus lines would land on the identical
+    // height and visually cross/overlap each other in renderMotherEdges() — see GAP.motherBusStep.
+    motherEdgeColorOf = {};
+    motherBusIndexOf  = {};
+    Object.values(wivesOf).forEach(wiveIdsOfHusband => {
+        if (wiveIdsOfHusband.length < 2) return;
+        wiveIdsOfHusband.forEach((wifeId, index) => {
+            motherEdgeColorOf[wifeId] = MOTHER_LINE_PALETTE[index % MOTHER_LINE_PALETTE.length];
+            motherBusIndexOf[wifeId]  = index;
+        });
+    });
+
+    // A husband with no father of his own has nothing else anchoring him to the tree besides
+    // this marriage — if his wife DOES have a father (so she's positioned via her own family),
+    // attach his subtree beside her (subtreeWidth/placeSubtree) instead of treating him as an
+    // unrelated independent root, which used to place him wherever the next free slot was —
+    // often visually far from his wife and children.
+    attachedHusbandOf = {};
+    renderMarriages.forEach(({ husband_id, wife_id }) => {
+        if (!hasFather.has(husband_id) && hasFather.has(wife_id)) {
+            attachedHusbandOf[wife_id] = husband_id;
+        }
+    });
+    attachedHusbandIds = new Set(Object.values(attachedHusbandOf));
+
     structuralRoots = renderPeople
         .map(p => p.id)
-        .filter(id => !hasFather.has(id) && !isMarriageOnlyWife(id));
+        .filter(id => !hasFather.has(id) && !isMarriageOnlyWife(id) && !attachedHusbandIds.has(id));
 
     // ── Section 4: ASSIGN GENERATIONS ────────────────────────────
     generationOf = {};
@@ -751,8 +1133,8 @@ function buildEdge({ d, stroke, strokeWidth, dashArray = null, lineCap = null, o
     return el;
 }
 
-function buildNodeBackground({ centerX, centerY, fill, stroke, strokeWidth, opacity = 1 }) {
-    return svgElement('rect', {
+function buildNodeBackground({ centerX, centerY, fill, stroke, strokeWidth, opacity = 1, borderDashArray = null }) {
+    const el = svgElement('rect', {
         x:              centerX - NODE.width  / 2,
         y:              centerY - NODE.height / 2,
         width:          NODE.width,
@@ -764,6 +1146,8 @@ function buildNodeBackground({ centerX, centerY, fill, stroke, strokeWidth, opac
         'stroke-width': strokeWidth,
         opacity,
     });
+    if (borderDashArray) el.setAttribute('stroke-dasharray', borderDashArray);
+    return el;
 }
 
 function buildLabel({ labelX, labelY, text, fill, fontSize = 14, opacity = 1 }) {
@@ -825,6 +1209,12 @@ function edgeKey(personIdA, personIdB) {
         : `${personIdB}-${personIdA}`;
 }
 
+// +1 if toX is at or past fromX, -1 if it's behind — used to offset a line toward whichever
+// side its destination actually sits on, instead of assuming a fixed direction.
+function directionSign(fromX, toX) {
+    return toX >= fromX ? 1 : -1;
+}
+
 function buildPathHighlights() {
     if (!selectedPersonA || !selectedPersonB) {
         return { pathNodeIds: new Set(), pathEdgeMap: new Map() };
@@ -870,14 +1260,14 @@ function renderMarriageArcs(group, isDimmed) {
         const startX    = husband.x + NODE.width / 2;
         const endX      = wife.x    - NODE.width / 2;
         const midX      = (startX + endX) / 2;
-        const arcHeight = Math.max(20, Math.abs(endX - startX) * 0.16);
+        const arcHeight = Math.max(EFFECT.marriageArcMinHeight, Math.abs(endX - startX) * LINE.marriageArcCurveRatio);
         const controlY  = husband.y - arcHeight;
-        const opacity   = (isDimmed(husband_id) && isDimmed(wife_id)) ? 0.1 : 0.55;
+        const opacity   = (isDimmed(husband_id) && isDimmed(wife_id)) ? LINE.dimmedOpacity : LINE.marriageOpacity;
 
         group.appendChild(buildEdge({
             d:           `M ${startX} ${husband.y} Q ${midX} ${controlY} ${endX} ${wife.y}`,
             stroke:      COLOR.edgeMarriage,
-            strokeWidth: 2,
+            strokeWidth: LINE.marriageWidth,
             dashArray:   '4 3',
             opacity,
         }));
@@ -892,15 +1282,24 @@ function renderFatherEdges(group, isDimmed, edgePathPosition) {
         );
         if (!children.length) return;
 
-        const parent       = positionOf(parentId);
-        const parentBottom = parent.y + NODE.height / 2;
-        const busY         = parentBottom + (GAP.level - NODE.height) * 0.42;
-
+        const parent         = positionOf(parentId);
+        const parentBottom   = parent.y + NODE.height / 2;
         const childPositions = children.map(id => ({ id, x: positionOf(id).x, y: positionOf(id).y }));
+        // Anchored to the children's row, not the parent's — a father can himself be a married-in
+        // spouse nudged down by GAP.marriedInDrop (see attachedHusbandOf), and anchoring to his
+        // own (shifted) position let that nudge eat into the clearance this bus needs above the
+        // children's boxes. All direct children of one father share the same row, so any of their
+        // y's works as the reference.
+        const childTopEdge   = childPositions[0].y - NODE.height / 2;
+        const busY           = childTopEdge - Math.max(
+            GAP.minClearanceAboveChild,
+            (GAP.level - NODE.height) * (1 - LINE.fatherBusYRatio)
+        );
+
         const busLeft        = Math.min(parent.x, ...childPositions.map(c => c.x));
         const busRight       = Math.max(parent.x, ...childPositions.map(c => c.x));
         const allDimmed      = isDimmed(parentId) && children.every(id => isDimmed(id));
-        const baseOpacity    = allDimmed ? 0.1 : 0.65;
+        const baseOpacity    = allDimmed ? LINE.dimmedOpacity : LINE.fatherOpacity;
 
         // ── Base bus structure (normal color, drawn first) ──────────
         // Always draw the full bus in the base color so the structural
@@ -908,7 +1307,7 @@ function renderFatherEdges(group, isDimmed, edgePathPosition) {
         group.appendChild(buildEdge({
             d:           `M ${parent.x} ${parentBottom} L ${parent.x} ${busY}`,
             stroke:      COLOR.edgeFather,
-            strokeWidth: 2,
+            strokeWidth: LINE.fatherWidth,
             opacity:     baseOpacity,
         }));
 
@@ -916,7 +1315,7 @@ function renderFatherEdges(group, isDimmed, edgePathPosition) {
             group.appendChild(buildEdge({
                 d:           `M ${busLeft} ${busY} L ${busRight} ${busY}`,
                 stroke:      COLOR.edgeFather,
-                strokeWidth: 2,
+                strokeWidth: LINE.fatherWidth,
                 opacity:     baseOpacity,
             }));
         }
@@ -925,8 +1324,8 @@ function renderFatherEdges(group, isDimmed, edgePathPosition) {
             group.appendChild(buildEdge({
                 d:           `M ${childX} ${busY} L ${childX} ${childY - NODE.height / 2}`,
                 stroke:      COLOR.edgeFather,
-                strokeWidth: 2,
-                opacity:     isDimmed(childId) ? 0.1 : baseOpacity,
+                strokeWidth: LINE.fatherWidth,
+                opacity:     isDimmed(childId) ? LINE.dimmedOpacity : baseOpacity,
             }));
         });
 
@@ -940,7 +1339,7 @@ function renderFatherEdges(group, isDimmed, edgePathPosition) {
             group.appendChild(buildEdge({
                 d:           `M ${parent.x} ${parentBottom} L ${parent.x} ${busY} L ${childX} ${busY} L ${childX} ${childY - NODE.height / 2}`,
                 stroke:      interpolateColor(COLOR.borderSelectedA, COLOR.borderSelectedB, gradientPosition),
-                strokeWidth: 3,
+                strokeWidth: LINE.fatherHighlight,
                 opacity:     1,
                 animated:    true,
             }));
@@ -961,17 +1360,35 @@ function renderMotherEdges(group, isDimmed, edgePathPosition) {
             const gradientPosition = edgePathPosition(parentId, childId);
             const onPath           = gradientPosition !== null;
             const dimmed   = isDimmed(parentId) && isDimmed(childId);
-            const startX   = parent.x + NODE.width * 0.15;
-            const endX     = child.x  - NODE.width * 0.15;
-            const busY     = parent.y + NODE.height / 2 + (GAP.level - NODE.height) * 0.42;
+            // The mother's own exit point stays on the SAME side for every one of her children —
+            // it's just sitting beside the father-edge's centered stem, so it should look
+            // consistent no matter which child a given line is headed to. Only the entry point at
+            // the child needs to adapt to that specific child's side: a fixed entry offset made
+            // the line double back on itself whenever a child ended up on the opposite side of its
+            // mother than the offset assumed, causing needless overlap (mothers are frequently not
+            // centered over their own children — see attachedHusbandOf / co-wife layout).
+            const startX   = parent.x + NODE.width * LINE.motherOffsetRatio;
+            const endX     = child.x  - NODE.width * LINE.motherOffsetRatio * directionSign(parent.x, child.x);
+            // Anchored to the CHILD's row, not the mother's own — a married-in mother's position
+            // already includes her own GAP.marriedInDrop nudge (and co-wives stack GAP.motherBusStep
+            // on top of that), so anchoring to her instead of the child let those add up enough to
+            // push the bus line below the child's own top edge, visually cutting through it (and
+            // any sibling it passed over). The child's row is never nudged, so it's a safe anchor.
+            // Co-wives sit on the exact same row, so without this per-wife step every wife's
+            // mother-edges would land on the identical bus height and visually cross each other.
+            const childTopEdge = child.y - NODE.height / 2;
+            const busY = childTopEdge - Math.max(
+                GAP.minClearanceAboveChild,
+                (GAP.level - NODE.height) * (1 - LINE.motherBusYRatio) - (motherBusIndexOf[parentId] ?? 0) * GAP.motherBusStep
+            );
 
             group.appendChild(buildEdge({
                 d:           `M ${startX} ${parent.y + NODE.height / 2} L ${startX} ${busY} L ${endX} ${busY} L ${endX} ${child.y - NODE.height / 2}`,
-                stroke:      onPath ? interpolateColor(COLOR.borderSelectedA, COLOR.borderSelectedB, gradientPosition) : COLOR.edgeMother,
-                strokeWidth: onPath ? 3 : 2,
-                dashArray:   onPath ? null : '0.5 7',
+                stroke:      onPath ? interpolateColor(COLOR.borderSelectedA, COLOR.borderSelectedB, gradientPosition) : (motherEdgeColorOf[parentId] ?? COLOR.edgeMother),
+                strokeWidth: onPath ? LINE.motherHighlight : LINE.motherWidth,
+                dashArray:   onPath ? null : LINE.motherDashArray,
                 lineCap:     onPath ? null : 'round',
-                opacity:     onPath ? 1 : (dimmed ? 0.08 : 0.45),
+                opacity:     onPath ? 1 : (dimmed ? LINE.dimmedOpacity : LINE.motherOpacity),
                 animated:    onPath,
             }));
         });
@@ -987,18 +1404,21 @@ function nodeAppearanceFor(personId, pathNodeIds, hasBothSelected, dropTargetId)
     const onPath       = pathNodeIds.has(personId) && !isSelectedA && !isSelectedB;
     const dimmed       = hasBothSelected && !pathNodeIds.has(personId);
 
-    if (isDropTarget) return { fill: '#0A2218', stroke: COLOR.borderSelectedA, strokeWidth: 3, textFill: '#A0E8C0', opacity: 1 };
-    if (isSelectedA)  return { fill: COLOR.nodeSelectedA, stroke: COLOR.borderSelectedA, strokeWidth: 2.5, textFill: '#D0F0E0', opacity: 1 };
-    if (isSelectedB)  return { fill: COLOR.nodeSelectedB, stroke: COLOR.borderSelectedB, strokeWidth: 2.5, textFill: '#F0C8A8', opacity: 1 };
-    if (onPath)       return { fill: COLOR.nodeOnPath,     stroke: COLOR.borderOnPath,     strokeWidth: 2,   textFill: COLOR.textOnPath,   opacity: 1 };
-    if (dimmed)       return { fill: COLOR.nodeDimmed,     stroke: COLOR.borderDimmed,     strokeWidth: 1,   textFill: COLOR.textDimmed,   opacity: 0.3 };
+    if (isDropTarget) return { fill: '#0A2218', stroke: COLOR.borderSelectedA, strokeWidth: EFFECT.nodeBorderDropTarget, textFill: '#A0E8C0', opacity: 1 };
+    if (isSelectedA)  return { fill: COLOR.nodeSelectedA, stroke: COLOR.borderSelectedA, strokeWidth: EFFECT.nodeBorderSelected, textFill: '#D0F0E0', opacity: 1 };
+    if (isSelectedB)  return { fill: COLOR.nodeSelectedB, stroke: COLOR.borderSelectedB, strokeWidth: EFFECT.nodeBorderSelected, textFill: '#F0C8A8', opacity: 1 };
+    if (onPath)       return { fill: COLOR.nodeOnPath,     stroke: COLOR.borderOnPath,     strokeWidth: EFFECT.nodeBorderOnPath, textFill: COLOR.textOnPath,   opacity: 1 };
+    if (dimmed)       return { fill: COLOR.nodeDimmed,     stroke: COLOR.borderDimmed,     strokeWidth: EFFECT.nodeBorderDimmed, textFill: COLOR.textDimmed,   opacity: EFFECT.dimmedNodeOpacity };
+
+    const marriedIn = isMarriedInSpouse(personId);
 
     return {
-        fill:        isMale ? COLOR.nodeMale : COLOR.nodeFemale,
-        stroke:      isMale ? COLOR.borderMale : COLOR.borderFemale,
-        strokeWidth: 1.5,
-        textFill:    COLOR.textDefault,
-        opacity:     1,
+        fill:            isMale ? COLOR.nodeMale : COLOR.nodeFemale,
+        stroke:          marriedIn ? COLOR.edgeMarriage : (isMale ? COLOR.borderMale : COLOR.borderFemale),
+        strokeWidth:     EFFECT.nodeBorderDefault,
+        textFill:        COLOR.textDefault,
+        opacity:         1,
+        borderDashArray: marriedIn ? NODE.marriedInBorderDashArray : null,
     };
 }
 
@@ -1018,7 +1438,7 @@ function renderAllNodes(group, isDimmed, isOnPath, pathNodeIds, hasBothSelected,
         // Scale drop target up so it "magnetises" toward the dragged node
         if (isTarget) {
             nodeGroup.setAttribute('transform',
-                `translate(${position.x},${position.y}) scale(1.15) translate(${-position.x},${-position.y})`
+                `translate(${position.x},${position.y}) scale(${EFFECT.dropTargetScale}) translate(${-position.x},${-position.y})`
             );
         }
 
@@ -1030,15 +1450,15 @@ function renderAllNodes(group, isDimmed, isOnPath, pathNodeIds, hasBothSelected,
         // Drop target outer ring — rendered first so it sits behind the node
         if (isTarget) {
             const ringEl = svgElement('rect', {
-                x:              position.x - NODE.width  / 2 - 10,
-                y:              position.y - NODE.height / 2 - 10,
-                width:          NODE.width  + 20,
-                height:         NODE.height + 20,
-                rx:             NODE.cornerRadius + 10,
-                ry:             NODE.cornerRadius + 10,
+                x:              position.x - NODE.width  / 2 - EFFECT.dropRingPadding,
+                y:              position.y - NODE.height / 2 - EFFECT.dropRingPadding,
+                width:          NODE.width  + EFFECT.dropRingPadding * 2,
+                height:         NODE.height + EFFECT.dropRingPadding * 2,
+                rx:             NODE.cornerRadius + EFFECT.dropRingPadding,
+                ry:             NODE.cornerRadius + EFFECT.dropRingPadding,
                 fill:           'none',
                 stroke:         COLOR.borderSelectedA,
-                'stroke-width': 2.5,
+                'stroke-width': EFFECT.dropRingStrokeWidth,
                 filter:         'url(#ftGlow)',
                 class:          'ft-drop-ring',
             });
@@ -1048,59 +1468,60 @@ function renderAllNodes(group, isDimmed, isOnPath, pathNodeIds, hasBothSelected,
         // Glow ring for path-highlighted nodes
         if (isOnPath(person.id)) {
             nodeGroup.appendChild(svgElement('rect', {
-                x:              position.x - NODE.width  / 2 - 5,
-                y:              position.y - NODE.height / 2 - 5,
-                width:          NODE.width  + 10,
-                height:         NODE.height + 10,
-                rx:             NODE.cornerRadius + 5,
-                ry:             NODE.cornerRadius + 5,
+                x:              position.x - NODE.width  / 2 - EFFECT.glowRingPadding,
+                y:              position.y - NODE.height / 2 - EFFECT.glowRingPadding,
+                width:          NODE.width  + EFFECT.glowRingPadding * 2,
+                height:         NODE.height + EFFECT.glowRingPadding * 2,
+                rx:             NODE.cornerRadius + EFFECT.glowRingPadding,
+                ry:             NODE.cornerRadius + EFFECT.glowRingPadding,
                 fill:           'none',
                 stroke:         COLOR.borderOnPath,
-                'stroke-width': 1,
-                opacity:        0.35,
+                'stroke-width': EFFECT.glowRingStrokeWidth,
+                opacity:        EFFECT.glowRingOpacity,
                 filter:         'url(#ftGlow)',
             }));
         }
 
         nodeGroup.appendChild(buildNodeBackground({
-            centerX:     position.x,
-            centerY:     position.y,
-            fill:        appear.fill,
-            stroke:      appear.stroke,
-            strokeWidth: appear.strokeWidth,
-            opacity:     appear.opacity,
+            centerX:         position.x,
+            centerY:         position.y,
+            fill:            appear.fill,
+            stroke:          appear.stroke,
+            strokeWidth:     appear.strokeWidth,
+            opacity:         appear.opacity,
+            borderDashArray: appear.borderDashArray,
         }));
 
         const [nameLine1, nameLine2] = splitNameLines(person.name);
         const hasSecondLine  = nameLine2.trim().length > 0;
-        const firstLineY     = position.y + (hasSecondLine ? -16 : 0);
+        const firstLineY     = position.y + (hasSecondLine ? -NODE.nameLineOffset : 0);
 
         nodeGroup.appendChild(buildLabel({
             labelX:  position.x,
             labelY:  firstLineY + 5,
             text:    nameLine1,
             fill:    appear.textFill,
-            fontSize: 18,
+            fontSize: NODE.fontSizeName1,
             opacity: appear.opacity,
         }));
 
         if (hasSecondLine) {
             nodeGroup.appendChild(buildLabel({
                 labelX:   position.x,
-                labelY:   position.y + 16 + 8,
+                labelY:   position.y + NODE.nameLineOffset + NODE.nameLineGap,
                 text:     nameLine2,
                 fill:     appear.textFill,
-                fontSize: 15,
-                opacity:  appear.opacity * 0.8,
+                fontSize: NODE.fontSizeName2,
+                opacity:  appear.opacity * NODE.nameLine2OpacityFactor,
             }));
         }
 
         nodeGroup.appendChild(svgElement('circle', {
-            cx:               position.x + NODE.width  / 2 - 7,
-            cy:               position.y - NODE.height / 2 + 7,
-            r:                5,
+            cx:               position.x + NODE.width  / 2 - NODE.genderPipInset,
+            cy:               position.y - NODE.height / 2 + NODE.genderPipInset,
+            r:                NODE.genderPipRadius,
             fill:             isMale ? COLOR.genderPipMale : COLOR.genderPipFemale,
-            opacity:          appear.opacity * 0.85,
+            opacity:          appear.opacity * NODE.genderPipOpacityFactor,
             'pointer-events': 'none',
         }));
 
@@ -1670,7 +2091,7 @@ function fitTreeToViewport() {
     const rect            = viewport.getBoundingClientRect();
     const allPos          = Object.values(basePositions);
     const canvasWidth     = allPos.length ? Math.max(...allPos.map(p => p.x)) + NODE.width  / 2 + GAP.margin : rect.width;
-    const canvasHeight    = allPos.length ? Math.max(...allPos.map(p => p.y)) + NODE.height / 2 + 80        : rect.height;
+    const canvasHeight    = allPos.length ? Math.max(...allPos.map(p => p.y)) + NODE.height / 2 + EFFECT.canvasBottomMargin : rect.height;
     const scaleX          = rect.width  / canvasWidth;
     const scaleY          = rect.height / canvasHeight;
     viewState.zoom = Math.min(scaleX, scaleY, 1) * FIT_PADDING;
@@ -1717,8 +2138,8 @@ viewport.addEventListener('pointercancel', () => {
     viewport.style.cursor = 'grab';
 });
 
-document.getElementById('btn-zoom-in')     .addEventListener('click', () => zoomAroundCenter(1.2));
-document.getElementById('btn-zoom-out')    .addEventListener('click', () => zoomAroundCenter(1 / 1.2));
+document.getElementById('btn-zoom-in')     .addEventListener('click', () => zoomAroundCenter(ZOOM_STEP_FACTOR));
+document.getElementById('btn-zoom-out')    .addEventListener('click', () => zoomAroundCenter(1 / ZOOM_STEP_FACTOR));
 document.getElementById('btn-zoom-fit')    .addEventListener('click', fitTreeToViewport);
 document.getElementById('btn-patrilineal') .addEventListener('click', togglePatrilinealMode);
 
@@ -1772,7 +2193,105 @@ document.getElementById('btn-patrilineal') .addEventListener('click', togglePatr
 }());
 
 // ══════════════════════════════════════════════════════════════════
-// 17. MOBILE PANEL TOGGLE
+// 17. DESIGN SETTINGS PANEL — live-editable numbers, saved to localStorage
+// ══════════════════════════════════════════════════════════════════
+
+// Maps each editable TREE_CONFIG key to its <input> element id.
+const SETTINGS_FIELDS = [
+    { key: 'scale',              id: 'cfg-scale' },
+
+    { key: 'nodeWidth',          id: 'cfg-node-width' },
+    { key: 'nodeHeight',         id: 'cfg-node-height' },
+    { key: 'nodeCornerRadius',   id: 'cfg-node-corner' },
+    { key: 'fontSizeName1',      id: 'cfg-font-1' },
+    { key: 'fontSizeName2',      id: 'cfg-font-2' },
+
+    { key: 'gapCouple',          id: 'cfg-gap-couple' },
+    { key: 'gapSibling',         id: 'cfg-gap-sibling' },
+    { key: 'gapLevel',           id: 'cfg-gap-level' },
+    { key: 'gapMargin',          id: 'cfg-gap-margin' },
+    { key: 'gapTopPad',          id: 'cfg-gap-toppad' },
+    { key: 'gapMarriedInDrop',   id: 'cfg-gap-married-in-drop' },
+    { key: 'gapMotherBusStep',   id: 'cfg-gap-mother-bus-step' },
+
+    { key: 'fatherLineWidth',    id: 'cfg-father-width' },
+    { key: 'motherLineWidth',    id: 'cfg-mother-width' },
+    { key: 'motherOpacity',      id: 'cfg-mother-opacity' },
+    { key: 'motherDashLength',   id: 'cfg-mother-dash-length' },
+    { key: 'motherDashGap',      id: 'cfg-mother-dash-gap' },
+    { key: 'marriageLineWidth',  id: 'cfg-marriage-width' },
+];
+
+function populateSettingsInputs() {
+    SETTINGS_FIELDS.forEach(({ key, id }) => {
+        const input = document.getElementById(id);
+        if (input) input.value = TREE_CONFIG[key];
+    });
+}
+
+// Keeps the static legend swatches showing the same width/dash/opacity as the real tree.
+function refreshLegendPreview() {
+    const fatherLine   = document.getElementById('legend-line-father');
+    const motherLine   = document.getElementById('legend-line-mother');
+    const marriageLine = document.getElementById('legend-line-marriage');
+
+    if (fatherLine) fatherLine.setAttribute('stroke-width', LINE.fatherWidth);
+
+    if (motherLine) {
+        motherLine.setAttribute('stroke-width', LINE.motherWidth);
+        motherLine.setAttribute('stroke-dasharray', LINE.motherDashArray);
+        motherLine.setAttribute('opacity', LINE.motherOpacity);
+    }
+
+    if (marriageLine) marriageLine.setAttribute('stroke-width', LINE.marriageWidth);
+}
+
+function onConfigChanged() {
+    // Deliberately does NOT call fitTreeToViewport(): that function auto-zooms to
+    // make the tree fill the viewport, which would silently cancel out any size
+    // change made here (e.g. a bigger "scale" would just get zoomed back out to
+    // the same apparent size). Leaving pan/zoom untouched lets the user actually
+    // see the effect of what they changed; they can hit "⌖" to re-fit afterward.
+    applyTreeConfig();
+    saveTreeConfig();
+    refreshLegendPreview();
+    rebuildLayout();
+    render();
+}
+
+function bindSettingsInputs() {
+    SETTINGS_FIELDS.forEach(({ key, id }) => {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.addEventListener('input', () => {
+            const value = parseFloat(input.value);
+            if (Number.isNaN(value)) return;
+            TREE_CONFIG[key] = value;
+            onConfigChanged();
+        });
+    });
+}
+
+document.getElementById('btn-settings').addEventListener('click', () => {
+    document.getElementById('settings-panel').classList.toggle('ft-hidden');
+});
+
+document.getElementById('settings-close').addEventListener('click', () => {
+    document.getElementById('settings-panel').classList.add('ft-hidden');
+});
+
+document.getElementById('settings-reset').addEventListener('click', () => {
+    TREE_CONFIG = { ...DEFAULT_TREE_CONFIG };
+    populateSettingsInputs();
+    onConfigChanged();
+});
+
+populateSettingsInputs();
+bindSettingsInputs();
+refreshLegendPreview();
+
+// ══════════════════════════════════════════════════════════════════
+// 18. MOBILE PANEL TOGGLE
 // ══════════════════════════════════════════════════════════════════
 
 document.getElementById('panel-toggle').addEventListener('click', () => {
@@ -1786,7 +2305,7 @@ window.closeMobilePanel = function () {
 };
 
 // ══════════════════════════════════════════════════════════════════
-// 18. INITIALISE
+// 19. INITIALISE
 // ══════════════════════════════════════════════════════════════════
 
 render();

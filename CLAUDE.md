@@ -56,6 +56,13 @@ This file holds AI-agent-specific working notes for this codebase: coding standa
 - Family tree visual ✅ — pan/drag/zoom, rectangular nodes, side panel, mobile drawer
 - Drag-to-link ✅ — drag a node onto another to create parent/marriage links with full validation
 - Kinship labels ✅ — 3rd person, both directions, marriage-extended, double marriage-extended, half-sibling, 16/16 tests
+- Tree design settings ✅ — every visual number (node/font/gap/line sizes) live-editable via the ⚙
+  panel, with a single global scale multiplier; persisted to localStorage
+- Polygamy visual clarity ✅ — each co-wife gets her own mother-line color and vertical bus height,
+  a married-in spouse (no father of their own) gets a dashed border + small row offset, and edge
+  routing is anchored to avoid overlapping/clipping through sibling nodes
+- Patrilineal toggle fixed ✅ — "عائلة واحدة" button (men-only lineage view) previously crashed
+  silently on any family with daughters; now filters correctly
 
 ## Coding Standards
 - No single-letter or two-letter variable names (no $da, $db, $pA, $pB etc.)
@@ -104,23 +111,84 @@ This file holds AI-agent-specific working notes for this codebase: coding standa
 All rendering is client-side JS inside an IIFE in `resources/views/livewire/family-tree.blade.php`.
 PHP only passes PEOPLE / PC / MARRIAGES as JSON via @json.
 
-### Constants (Section 2)
-```
-NODE  = { width:112, height:50, cornerRadius:8 }
-GAP   = { couple:126, sibling:55, level:120, margin:75, topPad:80 }
-COLOR = { nodeMale, nodeFemale, borderMale, borderFemale, nodeSelectedA/B, nodeOnPath,
-          nodeDimmed, borderSelectedA/B/OnPath/Dimmed, edgeFather/Mother/Marriage/Highlight,
-          textDefault/OnPath/Dimmed, genderPipMale/Female }
-FIT_PADDING      = 0.88   (zoom-to-fit padding factor)
-ROOT_X_GAP       = GAP.sibling * 3  (gap between structural root subtrees)
-LINK_SNAP_RADIUS = NODE.width / 2   (56px — dragged center must be inside target rect)
-```
+### Patrilineal Toggle ("عائلة واحدة" / "الكل" button)
+Switches the tree between the full family and a men-only لineage view — hides every woman, all
+marriages, and all mother-links, keeping only father→son chains. `togglePatrilinealMode()` flips
+`patrilinealMode` and calls `rebuildLayout()` + `render()` + `fitTreeToViewport()`.
+- **Bug fixed:** `activePC` (the active parent_child rows for the current mode) used to filter only
+  by relation type (`type === 'father'`), not by the child's gender — so a father→daughter link was
+  still included even in patrilineal mode. That daughter's id then showed up as a "child" in
+  `fatherChildrenOf`, but she had no entry of her own there (she'd been filtered out of
+  `renderPeople`), so the generation-assignment BFS crashed reading `fatherChildrenOf[herId].forEach`.
+  The crash was silent to the user — it happened after the button's own label had already flipped,
+  so clicking looked like it did nothing (label changed, tree never actually re-rendered).
+- Fix: `activePC` in patrilineal mode also requires `renderPeopleIds.has(pc.child_id)` — i.e. the
+  child must have survived the gender filter too, not just be a `'father'`-type relation.
+
+### Design Config & Constants (Section 2)
+Every tunable visual number (node size, fonts, gaps, link widths, ring/arc sizes) lives in
+`DEFAULT_TREE_CONFIG` — a single flat object — instead of being hardcoded at call sites.
+- `TREE_CONFIG` = the live, mutable copy of `DEFAULT_TREE_CONFIG`, loaded from `localStorage`
+  (key `shajaretna.treeDesignConfig.v1`) on init, edited live via the ⚙ settings panel (Section 17)
+- `TREE_CONFIG.scale` = a single global multiplier (default `1`) applied on top of every size
+  value — colors, opacity, and dash-pattern *ratios* are exempt
+- `applyTreeConfig()` recomputes `NODE` / `GAP` / `LINE` / `EFFECT` / `FIT_PADDING` /
+  `ROOT_X_GAP` / `LINK_SNAP_RADIUS` from `TREE_CONFIG * scale` — call this, then
+  `rebuildLayout()` + `render()`, any time `TREE_CONFIG` changes
+- `NODE` = `{ width, height, cornerRadius, fontSizeName1/2, nameLineOffset, nameLineGap,
+  genderPipRadius/Inset, marriedInBorderDashArray, nameLine2OpacityFactor, genderPipOpacityFactor }`
+- `GAP` = `{ couple, sibling, level, margin, topPad, marriedInDrop, motherBusStep }`
+- `LINE` = `{ fatherWidth/Highlight, motherWidth/Highlight/DashArray/Opacity, marriageWidth,
+  fatherBusYRatio, motherBusYRatio, motherOffsetRatio, marriageArcCurveRatio,
+  dimmedOpacity, fatherOpacity, marriageOpacity }`
+- `EFFECT` = `{ dropRingPadding/StrokeWidth, glowRingPadding/StrokeWidth, marriageArcMinHeight,
+  canvasBottomMargin, nodeBorderDefault/OnPath/Dimmed/Selected/DropTarget, dropTargetScale,
+  glowRingOpacity, dimmedNodeOpacity }`
+- `COLOR` = unchanged, not scale-affected (see Design System above)
+- `ZOOM_STEP_FACTOR` — multiplier per +/- zoom button click, from `TREE_CONFIG.zoomStepFactor`
+- **No inline literals in rendering code:** every ratio/opacity/scale-factor used by the render
+  functions is a named `TREE_CONFIG` entry, even ones not exposed in the settings panel UI (e.g.
+  `dimmedEdgeOpacity`, `nameLine2OpacityFactor`) — kept for readability, not because they're meant
+  to be user-tunable. The one exception is `directionSign()`'s own `1 : -1` — that's the
+  definition of the sign convention itself, not a call-site magic number, and things like
+  `NODE.width / 2` for center↔edge conversions, which are geometry, not a design choice
+- Defaults as of this writing: `nodeWidth:190, nodeHeight:88, nodeCornerRadius:12`; `gapCouple:210,
+  gapSibling:90, gapLevel:185, gapMargin:110, gapTopPad:120`; `fatherLineWidth:2.5, motherLineWidth:2.5,
+  marriageLineWidth:2.5`; `motherDashLength:3, motherDashGap:6, motherOpacity:0.55` (previously an
+  almost-invisible `0.5 7` dash at `0.45` opacity — bumped after user feedback that it was too faint
+  to see without zooming in a lot)
+- **Important:** `onConfigChanged()` deliberately does NOT call `fitTreeToViewport()` — that function
+  auto-zooms to fill the viewport, which would silently cancel out any size change (uniform scaling
+  is invisible after a fit-to-viewport). Settings changes re-render at the current pan/zoom so the
+  user can actually see the effect; they hit "⌖" manually to re-fit afterward.
+- `FIT_PADDING = TREE_CONFIG.fitPadding` (default `1`, not affected by `scale`) — zoom-to-fit padding factor
+- `ROOT_X_GAP = GAP.sibling * 3` — gap between structural root subtrees
+- `LINK_SNAP_RADIUS = NODE.width / 2` — dragged center must be inside target rect
 
 ### Layout Algorithm (Section 5)
 - Paternal-first recursive subtree with couple-center model
-- `structuralRoots` = people with no father AND not a marriage-only wife
-- Marriage-only wives placed to the right of their husband at `GAP.couple` spacing
-- Married-in husbands aligned to their wife's generation (regardless of whether wife has a father)
+- `structuralRoots` = people with no father AND not a marriage-only wife AND not an attached husband
+- Marriage-only wives (no father of their own) placed to the right of their husband at `GAP.couple` spacing
+- `attachedHusbandOf[wifeId] = husbandId` — a husband with no father of his own, married to a wife
+  who DOES have a father, is attached beside her instead of placed as an unrelated independent root.
+  Before this, his only anchor to the tree was the marriage itself, so he'd land wherever the next
+  free root slot was — often visually far from his wife and kids, making the mother-child line
+  between her and their children stretch across the whole canvas. `subtreeWidth()` reserves
+  `GAP.couple + subtreeWidth(attachedHusbandId)` next to her; `placeSubtree()` places his entire
+  subtree edge-to-edge beside her (not center-to-center) so his own width can never overlap her.
+- Married-in husbands aligned to their wife's generation (regardless of whether wife has a father) —
+  unaffected by the above; generation (row) and X-position (column) are assigned independently
+- **Married-in visual cue:** `isMarriedInSpouse(id)` = `isMarriageOnlyWife(id) || attachedHusbandIds.has(id)`
+  — anyone positioned purely by marriage rather than blood descent gets a small `GAP.marriedInDrop`
+  (default 24px) downward nudge on their own box only (never their children, who still land on the
+  normal generation row) plus a gold dashed border (`COLOR.edgeMarriage`, `NODE.marriedInBorderDashArray`)
+  in `nodeAppearanceFor()`'s default branch — makes it visually obvious at a glance that e.g. a wife
+  sitting beside her husband's siblings isn't one of them
+- **Couple spacing consistency:** the attached-husband edge-to-edge gap is `GAP.couple - NODE.width`,
+  not `GAP.couple` — `GAP.couple` is a center-to-center convention everywhere else in this file, so
+  reusing it as a raw edge gap here made an attached couple sit a whole extra `NODE.width` farther
+  apart than a normal marriage-only-wife couple. `subtreeWidth()`'s reservation for this case is
+  `GAP.couple + subtreeWidth(attachedHusbandId)` to match (the `NODE.width` terms cancel out)
 - `subtreeWidth()` memoised; `placeSubtree()` recursive
 - Fallback: unplaced people positioned at `nextRootX`
 - `positionOverrides` map: drag overrides applied on top of `basePositions`
@@ -135,6 +203,31 @@ LINK_SNAP_RADIUS = NODE.width / 2   (56px — dragged center must be inside targ
   - Base bus drawn first in normal color; per-child highlighted overlay drawn on top
   - This prevents the bus glowing toward non-path siblings
 - Mother edges: offset dashed lines (offset ±15% of NODE.width to avoid overlap)
+  - The mother's own exit point (`startX`) is always offset the SAME fixed direction — consistent
+    for every one of her children, since it's just sitting beside the father-edge's centered stem
+  - The entry point at each child (`endX`) instead follows `directionSign(parent.x, child.x)` —
+    a fixed entry offset made the line double back on itself whenever a child ended up on the
+    opposite side of its mother than the offset assumed (common for a second wife, since children
+    are laid out centered on the FATHER, not on each individual wife — see عائشة خليل, who sits
+    between her two sons). Only the entry side needed to adapt; the exit side never did.
+  - `motherEdgeColorOf[wifeId]` (built in `rebuildLayout()`, cycling `MOTHER_LINE_PALETTE`) gives
+    each wife of a polygamous husband her own mother-line color, in marriage order — a husband
+    with only one wife is left out of the map, so her mother-links stay the plain default `edgeMother`
+  - `LINE.fatherBusYRatio` (0.38) / `LINE.motherBusYRatio` (0.62) — used to sit at the exact same
+    height, so for a couple's shared children the mother's dashed line was drawn directly on top of
+    the father's solid line for the whole horizontal stretch. Now deliberately different heights.
+  - `motherBusIndexOf[wifeId]` + `GAP.motherBusStep` — co-wives sit on the exact same row, so their
+    individual mother-bus lines used to ALSO collide with each other (not just with the father's),
+    since every wife's busY came from the same `motherBusYRatio` formula. Each wife now gets an
+    extra `GAP.motherBusStep` (20px default) added per her marriage-order index, so any number of
+    co-wives' mother-lines stack at clearly distinct heights instead of overlapping.
+  - **Both busY formulas are anchored to the CHILDREN's row, not the parent's.** A parent can be a
+    married-in spouse nudged down by `GAP.marriedInDrop` (see attachedHusbandOf), and co-wives stack
+    `GAP.motherBusStep` on top of that — anchoring to the parent's own (shiftable) position let those
+    add up enough to push a bus line below the children's own top edge, visually cutting through a
+    child's (or sibling's) box. Children are never nudged, so their row is a stable anchor:
+    `busY = childTopEdge - max(GAP.minClearanceAboveChild, ...)` — the `max()` floor guarantees a
+    minimum clearance no matter how many co-wife steps or drops would otherwise stack up before it.
 - Marriage arcs: quadratic Bézier curve above the couple
 
 ### Kinship Path Highlighting (Section 7)
@@ -183,6 +276,18 @@ Active validations in `buildLinkOptions`:
 - Legend: father/mother/marriage edge key + gender colour swatches
 - Unlinked people: those in neither parent_child nor marriages → "ربط ↗" links to /parents page
 - Mobile: panel hidden by default, slide-in drawer via ☰ button (bottom-left), backdrop overlay
+
+### Design Settings Panel (Section 17)
+- Opened via the ⚙ button in `.ft-zoom-controls`; `#settings-panel` toggles `.ft-hidden`
+- `SETTINGS_FIELDS` maps each editable `TREE_CONFIG` key to its `<input>` id — add a new row
+  there (and in the Blade markup) to expose any additional config value
+- `bindSettingsInputs()` wires every field's `input` event to `TREE_CONFIG[key] = value` → `onConfigChanged()`
+- `refreshLegendPreview()` keeps the static legend swatches (father/mother/marriage sample
+  lines) showing the same width/dash/opacity as the real tree — call it after any `LINE` change
+- "إعادة الضبط الافتراضي" (reset) button restores `DEFAULT_TREE_CONFIG` and re-populates inputs
+- **CSS gotcha:** `.ft-settings-panel.ft-hidden { display: none; }` must exist as its own rule —
+  `.ft-settings-panel` and `.ft-hidden` have equal specificity, so without this override whichever
+  rule is declared later in the stylesheet wins the cascade regardless of which class was added last
 
 ## Authentication
 - Login/register combined: /login → App\Livewire\Login (guest-only middleware)
