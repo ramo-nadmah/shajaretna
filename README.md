@@ -81,6 +81,13 @@ The database exists but is completely empty, with no tables. **Migrations** are 
 php artisan migrate
 ```
 
+**11. (Optional) Fill the database with sample data — `php artisan db:seed`**
+Right after migrating, every table is empty — no people, no families. A **seeder** is a script that inserts a batch of ready-made sample rows, so you have something to look at and test with immediately instead of manually adding every person by hand. This project's seeder (`database/seeders/DatabaseSeeder.php`) creates one login account plus a 4-generation sample family tree (14 people, including a two-wife marriage and a half-sibling case):
+```bash
+php artisan db:seed
+```
+Skip this step if you'd rather start with a completely empty tree and add real people yourself.
+
 Once this finishes, the project is fully installed. Continue with "Running the Dev Server" below to actually start it and view it in a browser.
 
 ### Prerequisites (already-set-up machine)
