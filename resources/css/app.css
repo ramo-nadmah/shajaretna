@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-ground:        #131D2B;
+    --color-ground-raised: #192536;
+    --color-ground-card:   #1D2D42;
+    --color-parchment:     #E8DFD0;
+    --color-muted:         #6B829E;
+    --color-gold:          #C8A63E;
+    --color-jade:          #2E5A4B;
+    --color-jade-bright:   #4A9A7A;
+}
+
+@layer base {
+    html {
+        direction: rtl;
+        /* Setting root font-size here (not body) so all rem values scale correctly */
+        font-size: 20px;
+    }
+
+    body {
+        background-color: var(--color-ground);
+        color: var(--color-parchment);
+    }
+
+    ::selection { background-color: var(--color-jade); color: var(--color-parchment); }
+
+    :focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
+}
+
+@layer components {
+
+    /* ── Buttons ─────────────────────────────────────────────── */
+
+    .btn-primary {
+        @apply bg-gold text-ground font-semibold px-5 py-3 rounded-lg text-base
+               hover:brightness-110 active:brightness-95 transition-all cursor-pointer;
+    }
+
+    .btn-ghost {
+        @apply border border-white/15 text-muted px-4 py-3 rounded-lg text-base
+               hover:border-white/30 hover:text-parchment transition-all cursor-pointer;
+    }
+
+    /* ── Forms ───────────────────────────────────────────────── */
+
+    .input-field {
+        @apply w-full bg-ground-raised border border-white/10 text-parchment
+               placeholder:text-muted rounded-lg px-4 py-3 text-base
+               focus:border-gold/50 focus:outline-none transition-colors;
+    }
+
+    .select-field {
+        @apply w-full bg-ground-raised border border-white/10 text-parchment
+               rounded-lg px-4 py-3 text-base focus:border-gold/50 focus:outline-none
+               transition-colors cursor-pointer;
+    }
+
+    /* ── Cards ───────────────────────────────────────────────── */
+
+    .card { @apply bg-ground-card rounded-xl border border-white/6 p-6; }
+
+    /* ── Gender pills ────────────────────────────────────────── */
+
+    .pill-male   { @apply inline-flex items-center gap-1.5 text-sm px-3 py-1 rounded-full bg-jade/40 text-jade-bright; }
+    .pill-female { @apply inline-flex items-center gap-1.5 text-sm px-3 py-1 rounded-full bg-pink-950/50 text-pink-400; }
+
+    /* ── Navigation ──────────────────────────────────────────── */
+
+    /* Site brand — Arabic + Latin hybrid typeface, slightly larger than nav links */
+    .site-brand {
+        font-family: 'Segoe UI', 'Noto Naskh Arabic', 'Instrument Sans', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--color-gold);
+        text-decoration: none;
+        transition: opacity 0.15s;
+    }
+    .site-brand:hover { opacity: 0.85; }
+
+    /* Standard nav link */
+    .nav-link {
+        @apply text-muted hover:text-parchment transition-colors
+               px-3 py-2 rounded-lg hover:bg-white/5 text-base;
+    }
+    .nav-link.active { @apply text-gold; }
+
+    /* Logout — needs a real tap target */
+    .nav-logout {
+        @apply text-muted text-base hover:text-parchment transition-colors
+               py-2 px-3 rounded-lg hover:bg-white/5 cursor-pointer bg-transparent border-0;
+    }
+
+    /* ── Section / page labels ───────────────────────────────── */
+
+    /* Small uppercase eyebrow label used above sections */
+    .section-label {
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        color: var(--color-muted);
+        text-transform: uppercase;
+    }
+
+    /* ── Table / list items ──────────────────────────────────── */
+
+    .table-row-action {
+        @apply text-sm text-muted hover:text-parchment transition-colors
+               px-3 py-2 rounded-lg hover:bg-white/5 cursor-pointer;
+    }
+}
